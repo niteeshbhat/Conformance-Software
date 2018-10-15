@@ -571,6 +571,7 @@ var cmaf = "<?php echo $cmaf; ?>";
 var dvb = 0;
 var hbbtv = 0;
 var dashif=0;
+var loadProgressxmlCount=0;
 
 /////////////////////////////////////////////////////////////
 //Check if 'drag and drop' feature is supported by the browser, if not, then traditional file upload can be used.
@@ -729,7 +730,16 @@ function  progressEventHandler(){
         }
         else
         {
-            ;//alert("" + );        // display status message
+            //Count the number of xml-load failures and later stop the timers to stop the Conformance test.
+            loadProgressxmlCount++;
+            if(loadProgressxmlCount>100)
+            {
+                //alert("" + );        // display status message
+                clearInterval(pollingTimer);
+                finishTest();
+                setStatusTextlabel("Conformance test stopped");
+            }
+                
         }
     }
 }
@@ -1388,9 +1398,11 @@ function loadXMLDoc(dname)
     {
         xhttp=new ActiveXObject("Microsoft.XMLHTTP");
     }
+   
     xhttp.open("GET",dname,false);
     xhttp.send("");
     return xhttp.responseXML;
+
 }
 
 function finishTest()
